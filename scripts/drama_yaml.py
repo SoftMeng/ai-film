@@ -311,7 +311,7 @@ def dump(meta: dict, body: str = "") -> str:
     return "\n".join(lines) + "\n"
 
 
-if __name__ == "__main__":
+def self_check() -> None:
     cases = [
         ("flat", "type: 入口\napplicable: 所有短剧\ntags: [drama, index]"),
         ("nested", "outer:\n  inner: value\n  list: [a, b]\nn: 1"),
@@ -329,4 +329,8 @@ if __name__ == "__main__":
         meta2, _ = parse(out)
         if meta != meta2:
             raise SystemExit(f"{name}: round-trip mismatch")
+
+
+if __name__ == "__main__":
+    self_check()
     print("yaml self-check OK")

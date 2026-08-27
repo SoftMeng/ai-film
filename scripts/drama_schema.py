@@ -121,7 +121,7 @@ def from_dict(data: dict) -> DramaConfig:
     )
 
 
-if __name__ == "__main__":
+def self_check() -> None:
     sample = {
         "短剧名": "测试",
         "characters": {
@@ -157,4 +157,7 @@ if __name__ == "__main__":
         if "feel_arc" not in str(e):
             raise SystemExit(f"self-check FAILED: unexpected msg: {e}")
 
+
+if __name__ == "__main__":
+    self_check()
     print("schema self-check OK")
