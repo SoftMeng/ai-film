@@ -86,7 +86,7 @@
 
 `短剧/` + `scripts/drama-*.py` 共同构成多镜头短剧生成机制：
 
-- **L1（markdown）**：5 文件机制说明（形象指纹 / 剧本层 / 情绪节拍库 / 镜头切换 / README），顶部均有 YAML frontmatter
+- **L1（markdown）**：README 入口 + 4 机制文件（形象指纹 / 剧本层 / 情绪节拍库 / 镜头切换），顶部均有 YAML frontmatter
 - **L2（Python 脚本）**：drama-new / drama-shot / drama-lint / drama-find / drama-from-json / drama_schema / drama_yaml
 - **L3（状态层）**：JSON 状态文件（形象.json / 节拍.json / 转场.json）+ YAML frontmatter markdown
 
