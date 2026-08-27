@@ -185,6 +185,11 @@ flowchart LR
 - **GitHub Flavored Markdown**——README 本身就是产品落地页。
 - **所有用 AI 写视频的人**——你们让"提示词工程"成为一门手艺。
 
+## 📮 反馈与贡献
+
+- 🐛 **提 Bug**：[`.github/ISSUE_TEMPLATE/bug-report.md`](.github/ISSUE_TEMPLATE/bug-report.md)
+- 💡 **提功能 / 创意需求**：[`.github/ISSUE_TEMPLATE/feature-request.md`](.github/ISSUE_TEMPLATE/feature-request.md)
+
 ---
 
 <div align="center">

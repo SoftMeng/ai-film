@@ -185,6 +185,11 @@ You are free to use, modify, and redistribute the prompt-engineering structure a
 - **GitHub Flavored Markdown** — the README itself is a product landing page.
 - **Everyone who uses AI to write videos** — you're turning "prompt engineering" into a craft.
 
+## 📮 Feedback & Contributing
+
+- 🐛 **Report a bug**: [`.github/ISSUE_TEMPLATE/bug-report.md`](.github/ISSUE_TEMPLATE/bug-report.md)
+- 💡 **Request a feature / creative**: [`.github/ISSUE_TEMPLATE/feature-request.md`](.github/ISSUE_TEMPLATE/feature-request.md)
+
 ---
 
 <div align="center">
