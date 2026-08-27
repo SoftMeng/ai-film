@@ -14,7 +14,7 @@ from drama_schema import DramaConfig, from_dict
 from drama_yaml import dump as yaml_dump
 
 
-def _load_module(name: str):
+def _load_hyphen_script_module(name: str):
     import importlib.util as _ilu
     spec = _ilu.spec_from_file_location(name, Path(__file__).parent / f"{name}.py")
     module = _ilu.module_from_spec(spec)
@@ -22,11 +22,11 @@ def _load_module(name: str):
     return module
 
 
-_drama_new = _load_module("drama-new")
+_drama_new = _load_hyphen_script_module("drama-new")
 next_index = _drama_new.next_index
 DRAMA_ROOT = _drama_new.DRAMA_ROOT
 
-_drama_shot = _load_module("drama-shot")
+_drama_shot = _load_hyphen_script_module("drama-shot")
 render_shot = _drama_shot.render_shot
 
 

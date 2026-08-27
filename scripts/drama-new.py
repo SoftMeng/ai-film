@@ -59,7 +59,18 @@ def write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def self_check() -> None:
+    if len(FINGERPRINT_FIELDS) != 6:
+        raise SystemExit(
+            f"self-check FAILED: FINGERPRINT_FIELDS 应为 6 字段，实际 {len(FINGERPRINT_FIELDS)}"
+        )
+    skel = fingerprint_skeleton()
+    if set(skel["主角"].keys()) != set(FINGERPRINT_FIELDS):
+        raise SystemExit("self-check FAILED: 指纹骨架字段与 FINGERPRINT_FIELDS 不一致")
+
+
 def main(argv: list[str] | None = None) -> int:
+    self_check()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("name", help="短剧名（中文/英文）")
     args = parser.parse_args(argv)

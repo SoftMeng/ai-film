@@ -96,6 +96,7 @@ def render_shot(drama_dir: Path, idx: int) -> tuple[Path, str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    self_check()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("drama_dir", type=Path, help="短剧目录路径")
     parser.add_argument("shot", type=int, help="镜号 N（>=1）")
@@ -109,6 +110,26 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  镜号: {args.shot}")
     print(f"  节拍: {beat}")
     return 0
+
+
+def self_check() -> None:
+    sample_fingerprint = {
+        "主角": {"年龄段": "约 25 岁", "脸型关键词": "瓜子",
+                "发型关键词": "齐耳短发", "肤色关键词": "自然黄",
+                "身高气质": "沉稳", "标志特征": ""},
+        "配角": [],
+    }
+    parts = []
+    for field, value in sample_fingerprint["主角"].items():
+        if value is None or value == "":
+            continue
+        template = FIELD_TEMPLATE.get(field)
+        if template:
+            parts.append(template.format(value=value))
+    if not parts:
+        raise SystemExit("self-check FAILED: render_actor 空输出")
+    if "标志： " in "\n".join(parts) or any(p.endswith("：") for p in parts):
+        raise SystemExit(f"self-check FAILED: 模板渲染留空尾巴: {parts}")
 
 
 if __name__ == "__main__":
