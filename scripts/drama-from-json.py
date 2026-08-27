@@ -12,19 +12,22 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from drama_schema import DramaConfig, from_dict
 from drama_yaml import dump as yaml_dump
-from pathlib import Path as _Path
-import importlib.util as _ilu
 
-_new_spec = _ilu.spec_from_file_location("drama_new", _Path(__file__).parent / "drama-new.py")
-_new_mod = _ilu.module_from_spec(_new_spec)
-_new_spec.loader.exec_module(_new_mod)
-next_index = _new_mod.next_index
-DRAMA_ROOT = _new_mod.DRAMA_ROOT
 
-_shot_spec = _ilu.spec_from_file_location("drama_shot", _Path(__file__).parent / "drama-shot.py")
-_shot_mod = _ilu.module_from_spec(_shot_spec)
-_shot_spec.loader.exec_module(_shot_mod)
-render_shot = _shot_mod.render_shot
+def _load_module(name: str):
+    import importlib.util as _ilu
+    spec = _ilu.spec_from_file_location(name, Path(__file__).parent / f"{name}.py")
+    module = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_drama_new = _load_module("drama-new")
+next_index = _drama_new.next_index
+DRAMA_ROOT = _drama_new.DRAMA_ROOT
+
+_drama_shot = _load_module("drama-shot")
+render_shot = _drama_shot.render_shot
 
 
 def _validate_arc(drama: DramaConfig) -> None:

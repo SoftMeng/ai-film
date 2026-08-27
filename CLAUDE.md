@@ -82,6 +82,18 @@
 | 输出 | `创意MV/NNN.txt` |
 | 脚本 | `scripts/` |
 
+## 短剧机制（多镜头连贯）
+
+`短剧/` + `scripts/drama-*.py` 共同构成多镜头短剧生成机制：
+
+- **L1（markdown）**：5 文件机制说明（形象指纹 / 剧本层 / 情绪节拍库 / 镜头切换 / README），顶部均有 YAML frontmatter
+- **L2（Python 脚本）**：drama-new / drama-shot / drama-lint / drama-find / drama-from-json / drama_schema / drama_yaml
+- **L3（状态层）**：JSON 状态文件（形象.json / 节拍.json / 转场.json）+ YAML frontmatter markdown
+
+入口：`/film-gen 短剧=主题X`——AI 输出 DramaConfig JSON（含 characters / scene / plot / feel_arc / shots），由 `python3 scripts/drama-from-json.py <json>` 自动建完整短剧工程。
+
+铁律 4 兜底：`scripts/lint-output.py` 默认扫 `创意MV/` + `短剧/` 两个产物目录。
+
 ## 风格与底线
 
 - **风格**：灵活模式，由用户/调度层/AI 共同决定，CLAUDE.md 不再锁定默认画风。

@@ -140,11 +140,13 @@ if __name__ == "__main__":
     }
     cfg = from_dict(sample)
     cfg.validate()
-    assert cfg.extras == {}
+    if cfg.extras != {}:
+        raise SystemExit(f"self-check FAILED: extras expected empty, got {cfg.extras}")
 
     extras_input = dict(sample, extras={"系列": "test", "custom": 1})
     cfg2 = from_dict(extras_input)
-    assert cfg2.extras == {"系列": "test", "custom": 1}
+    if cfg2.extras != {"系列": "test", "custom": 1}:
+        raise SystemExit(f"self-check FAILED: extras mismatch: {cfg2.extras}")
 
     bad = dict(sample)
     del bad["feel_arc"]
@@ -152,6 +154,7 @@ if __name__ == "__main__":
         from_dict(bad)
         raise SystemExit("self-check FAILED: missing field not detected")
     except ValueError as e:
-        assert "feel_arc" in str(e), f"unexpected msg: {e}"
+        if "feel_arc" not in str(e):
+            raise SystemExit(f"self-check FAILED: unexpected msg: {e}")
 
     print("schema self-check OK")

@@ -67,15 +67,18 @@ def self_check() -> None:
 
         ns1 = argparse.Namespace(tag="fingerprint", type=None, applicable=None)
         results = scan(root, ns1)
-        assert len(results) == 2, f"tag scan: expected 2, got {len(results)}"
+        if len(results) != 2:
+            raise SystemExit(f"tag scan: expected 2, got {len(results)}")
 
         ns2 = argparse.Namespace(tag=None, type="剧本", applicable=None)
         results = scan(root, ns2)
-        assert len(results) == 1 and results[0].name == "y.md"
+        if len(results) != 1 or results[0].name != "y.md":
+            raise SystemExit(f"type scan: expected [y.md], got {results}")
 
         ns3 = argparse.Namespace(tag=None, type=None, applicable="不存在")
         results = scan(root, ns3)
-        assert results == []
+        if results != []:
+            raise SystemExit(f"applicable scan: expected [], got {results}")
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -323,8 +323,10 @@ if __name__ == "__main__":
     for name, src in cases:
         wrapped = "---\n" + src + "\n---\nbody"
         meta, body = parse(wrapped)
-        assert body == "body", f"{name}: body mismatch"
+        if body != "body":
+            raise SystemExit(f"{name}: body mismatch")
         out = dump(meta, body)
         meta2, _ = parse(out)
-        assert meta == meta2, f"{name}: round-trip mismatch"
+        if meta != meta2:
+            raise SystemExit(f"{name}: round-trip mismatch")
     print("yaml self-check OK")

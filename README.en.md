@@ -43,6 +43,7 @@ Variety doesn't come from historical memory — it comes from the **dimension ma
 | 🌏 **Chinese-first** | Native Chinese Seedance structure by default; one-click switch to English h3 three-section style. |
 | 🧱 **Hard realism constraints** | No flashy gimmicks — protected by long-term hard rules in `指令/约束.md`. |
 | ⚙️ **Flexible aesthetic** | Decided jointly by user / scheduler / AI — no locked-in default style. |
+| 🎬 **Short-drama mode** | Multi-shot coherent micro-dramas (fingerprint + beat + transition) — see `短剧/`. |
 
 > [!TIP]
 > **Who is this for?** Creators who want to use AI for short videos but struggle with "writing professional prompts" or "every clip looking the same."
