@@ -8,6 +8,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from drama_yaml import dump as yaml_dump
 
 TRANSITION_HINT = {
     "缓切": "延续上一镜的氛围与节奏，运镜速度与上一镜尾保持一致。",
@@ -67,7 +70,14 @@ def render_shot(drama_dir: Path, idx: int) -> tuple[Path, str]:
     actor_lines = render_actor(fingerprint)
     beat_line = beat_name if beat_name else "TODO: 节拍未分配"
 
-    content = (
+    meta = {
+        "type": "shot",
+        "applicable": drama_dir.name,
+        "镜号": idx,
+        "节拍": beat_line,
+        "转场": switch_name or "TODO",
+    }
+    body = (
         f"【整体风格 · 节拍：{beat_line}】\n"
         f"TODO: 场景氛围与镜头描述\n\n"
         f"【镜头 {idx}】\n"
@@ -76,6 +86,7 @@ def render_shot(drama_dir: Path, idx: int) -> tuple[Path, str]:
         f"【演员动作】\nTODO: 动作描述\n\n"
         f"【运镜节奏】\nTODO: 运镜描述\n"
     )
+    content = yaml_dump(meta, body)
 
     shots_dir = drama_dir / "shots"
     shots_dir.mkdir(exist_ok=True)

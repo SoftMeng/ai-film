@@ -1,4 +1,4 @@
-"""Lint a short-drama project: cross-shot consistency, beat/transition validity, internal-code leak."""
+"""Lint a short-drama project: cross-shot consistency, beat/transition validity, internal-code leak, frontmatter."""
 
 from __future__ import annotations
 
@@ -12,6 +12,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = ROOT / "scripts"
+sys.path.insert(0, str(SCRIPTS_DIR))
+
+from drama_yaml import parse as yaml_parse  # noqa: E402
 
 VALID_BEATS = {"期待", "紧张", "释放", "留白", "收束"}
 VALID_SWITCHES = {"缓切", "硬切", "接切"}
@@ -89,6 +92,22 @@ def check_switches_validity(switches_data: dict) -> list[str]:
     return reports
 
 
+def check_frontmatter(path: Path, expected_type: str) -> list[str]:
+    reports: list[str] = []
+    if not path.exists():
+        reports.append(f"{path}:0:frontmatter缺失")
+        return reports
+    text = path.read_text(encoding="utf-8")
+    meta, _ = yaml_parse(text)
+    if not meta:
+        reports.append(f"{path}:0:frontmatter缺失")
+        return reports
+    actual_type = meta.get("type")
+    if actual_type != expected_type:
+        reports.append(f"{path}:0:frontmatter type({actual_type}) != {expected_type}")
+    return reports
+
+
 def self_check(rules: list) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
@@ -156,16 +175,15 @@ def main(argv: list[str] | None = None) -> int:
     beats = json.loads((drama_dir / "节拍.json").read_text(encoding="utf-8"))
     switches = json.loads((drama_dir / "转场.json").read_text(encoding="utf-8"))
 
-    if not shots_dir.exists():
-        print("PASS (no shots yet)")
-        return 0
-
-    reports = (
-        check_internal_codes(shots_dir, rules)
-        + check_fingerprint_consistency(shots_dir, fingerprint)
-        + check_beats_validity(beats)
-        + check_switches_validity(switches)
-    )
+    reports: list[str] = []
+    reports.extend(check_frontmatter(drama_dir / "剧本.md", "剧本"))
+    if shots_dir.exists():
+        for shot_file in sorted(shots_dir.glob("shot-*.txt")):
+            reports.extend(check_frontmatter(shot_file, "shot"))
+        reports.extend(check_internal_codes(shots_dir, rules))
+        reports.extend(check_fingerprint_consistency(shots_dir, fingerprint))
+    reports.extend(check_beats_validity(beats))
+    reports.extend(check_switches_validity(switches))
 
     if reports:
         print("\n".join(reports))
