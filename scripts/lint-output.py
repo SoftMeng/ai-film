@@ -1,4 +1,4 @@
-"""Scan 创意MV/NNN.txt for internal codes that must not leak to the public-facing prompt."""
+"""Scan product files for internal codes that must not leak to the public-facing prompt."""
 
 from __future__ import annotations
 
@@ -21,6 +21,8 @@ RULES: list[tuple[str, re.Pattern[str]]] = [
     ),
 ]
 
+DEFAULT_TARGETS: list[Path] = [Path("创意MV"), Path("短剧")]
+
 
 def scan_text(text: str) -> list[tuple[int, str, str]]:
     hits: list[tuple[int, str, str]] = []
@@ -33,7 +35,12 @@ def scan_text(text: str) -> list[tuple[int, str, str]]:
 
 def scan_path(target: Path) -> list[str]:
     reports: list[str] = []
-    files = sorted(target.rglob("*.txt")) if target.is_dir() else [target]
+    if target.is_dir():
+        files = sorted(target.rglob("*.txt"))
+    elif target.is_file():
+        files = [target]
+    else:
+        return reports
     for file_path in files:
         if not file_path.is_file():
             continue
@@ -65,19 +72,51 @@ def self_check() -> None:
     if not any(h[1] == "镜头模板编号" for h in dirty_hits):
         raise SystemExit(f"self-check FAILED: dirty sample missed 模板 5: {dirty_hits}")
 
+    with tempfile.TemporaryDirectory() as tmp:
+        dirty_file = Path(tmp) / "dirty.txt"
+        dirty_file.write_text(
+            "【整体风格 · 节拍：紧张】\n参考 No0008 与 模板 5 的节奏感。\n",
+            encoding="utf-8",
+        )
+        file_reports = scan_path(dirty_file)
+        labels = [r.rsplit(":", 1)[-1] for r in file_reports]
+        if "内部编号" not in labels:
+            raise SystemExit(
+                f"self-check FAILED: scan_path missed 内部编号: {file_reports}"
+            )
+        if "镜头模板编号" not in labels:
+            raise SystemExit(
+                f"self-check FAILED: scan_path missed 镜头模板编号: {file_reports}"
+            )
+
+
+def resolve_targets(args: argparse.Namespace) -> list[Path]:
+    if args.target is not None:
+        return [args.target]
+    return [t for t in DEFAULT_TARGETS if t.exists()]
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--target",
         type=Path,
-        default=Path("创意MV"),
-        help="文件或目录（默认 创意MV/）",
+        default=None,
+        help="单文件或单目录（不传则扫默认产物目录）",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="显式扫所有默认产物目录（创意MV/ + 短剧/）",
     )
     args = parser.parse_args(argv)
 
     self_check()
-    reports = scan_path(args.target)
+    targets = resolve_targets(args)
+
+    reports: list[str] = []
+    for target in targets:
+        reports.extend(scan_path(target))
 
     if reports:
         print("\n".join(reports))
